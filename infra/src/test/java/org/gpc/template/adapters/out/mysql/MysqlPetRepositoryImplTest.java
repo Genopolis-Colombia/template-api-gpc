@@ -56,7 +56,7 @@ class MysqlPetRepositoryImplTest {
     void getGet() { //TODO: improve this test
         Integer id = 2;
         Optional<Pet> maybePet = mySQLPetRepository.getPet(id);
-        maybePet.ifPresent(movie -> System.out.println("The pet is " + movie));
+        maybePet.ifPresent(pet -> System.out.println("The pet is " + pet));
         assert(maybePet.isEmpty());
     }
 }
