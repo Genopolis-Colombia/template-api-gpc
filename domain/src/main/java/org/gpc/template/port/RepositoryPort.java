@@ -14,5 +14,5 @@ public interface RepositoryPort {
 
     Optional<Pet> putPet(UpdatePet updatePet);
 
-
+    void deleteAll();
 }

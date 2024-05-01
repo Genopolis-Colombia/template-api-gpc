@@ -5,6 +5,8 @@ import org.gpc.template.adapters.out.mysql.transformers.PetTransformer;
 import org.gpc.template.kernel.Pet;
 import org.gpc.template.kernel.UpdatePet;
 import org.gpc.template.port.RepositoryPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -12,6 +14,7 @@ import java.util.Optional;
 public class MysqlPetRepositoryImpl implements RepositoryPort {
 
     private final PetRepository petRepository;
+    private static final Logger logger = LoggerFactory.getLogger(MysqlPetRepositoryImpl.class);
 
     public MysqlPetRepositoryImpl(PetRepository petRepository) {
         this.petRepository = petRepository;
@@ -19,6 +22,7 @@ public class MysqlPetRepositoryImpl implements RepositoryPort {
 
     @Override
     public Integer savePet(Pet pet) {
+        logger.debug("Starting saving pet");
         return petRepository.save(PetTransformer.petToEntity(pet)).getId();
     }
 
@@ -41,5 +45,9 @@ public class MysqlPetRepositoryImpl implements RepositoryPort {
         return Optional.of(PetTransformer.entityToPet(petEntity));
     }
 
-
+    // Only for testing purposes
+    @Override
+    public void deleteAll(){
+        petRepository.deleteAll();
+    }
 }

@@ -10,7 +10,8 @@ import org.gpc.template.usecase.CreatePetUseCaseImpl;
 import org.gpc.template.usecase.DeletePetUseCaseImpl;
 import org.gpc.template.usecase.GetPetUseCaseImpl;
 import org.gpc.template.usecase.PutPetUseCaseImpl;
-import org.springframework.http.ResponseEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -22,6 +23,7 @@ public class PetControllerAdapter {
     private final GetPetUseCaseImpl getPetUseCase;
     private final DeletePetUseCaseImpl deletePetUseCase;
     private final PutPetUseCaseImpl putPetUseCase;
+    private static final Logger logger = LoggerFactory.getLogger(PetControllerAdapter.class);
 
     @PostMapping("/pets")
     public CreatePetResponseDTO createPet(@RequestBody CreatePetRequestDTO petRequestDto) {
@@ -45,7 +47,6 @@ public class PetControllerAdapter {
     }
     @PutMapping("/pets/{pet_id}")
     public CreatePetResponseDTO putPet (@PathVariable Integer pet_id,@RequestBody CreatePetRequestDTO petRequestDto ){
-
         Optional<Pet> maybePet = getPetUseCase.execute(pet_id);
         maybePet.map(pet ->
             new UpdatePet(
@@ -87,9 +88,4 @@ public class PetControllerAdapter {
             return pet.breed();
         }
     }
-
-
-
-
-
 }
