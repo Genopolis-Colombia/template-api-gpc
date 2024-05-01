@@ -2,6 +2,7 @@ package org.gpc.template.adapters.out.mysql.transformers;
 
 import org.gpc.template.adapters.out.mysql.model.PetEntity;
 import org.gpc.template.kernel.Pet;
+import org.gpc.template.kernel.UpdatePet;
 
 public class PetTransformer {
 
@@ -21,5 +22,15 @@ public class PetTransformer {
                 petEntity.getSpecie(),
                 petEntity.getBreed()
         );
+    }
+
+    public static PetEntity updatePetToEntity(UpdatePet updatePet) {
+        PetEntity petEntity = new PetEntity();
+        petEntity.setId(updatePet.id());
+        petEntity.setAge(updatePet.age());
+        petEntity.setName(updatePet.name());
+        petEntity.setSpecie(updatePet.specie());
+        petEntity.setBreed(updatePet.breed());
+        return petEntity;
     }
 }

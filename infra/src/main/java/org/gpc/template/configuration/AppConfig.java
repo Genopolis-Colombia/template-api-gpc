@@ -4,7 +4,9 @@ import org.gpc.template.adapters.out.mysql.MysqlPetRepositoryImpl;
 import org.gpc.template.adapters.out.mysql.PetRepository;
 import org.gpc.template.port.RepositoryPort;
 import org.gpc.template.usecase.CreatePetUseCaseImpl;
+import org.gpc.template.usecase.DeletePetUseCaseImpl;
 import org.gpc.template.usecase.GetPetUseCaseImpl;
+import org.gpc.template.usecase.PutPetUseCaseImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -24,4 +26,15 @@ public class AppConfig {
     GetPetUseCaseImpl getPetUseCase(RepositoryPort repositoryPort){
         return new GetPetUseCaseImpl(repositoryPort);
     }
+
+    @Bean
+    DeletePetUseCaseImpl getDeletePetUseCase(RepositoryPort repositoryPort){
+        return new DeletePetUseCaseImpl(repositoryPort);
+    }
+    @Bean
+    PutPetUseCaseImpl getPutPetUseCase(RepositoryPort repositoryPort){
+        return new PutPetUseCaseImpl(repositoryPort);
+    }
+
+
 }
