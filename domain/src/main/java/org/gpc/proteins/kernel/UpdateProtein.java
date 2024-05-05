@@ -1,6 +1,8 @@
 package org.gpc.proteins.kernel;
 
-public record UpdateProtein(String name, Integer age, Specie specie, String breed, Integer id){
+import java.util.UUID;
 
+public record UpdateProtein(String fastaName, String source, String organism, String clasification, String clasificationEC, String authors, String fastaSequence,
+                            UUID protein_id) {
 
 }

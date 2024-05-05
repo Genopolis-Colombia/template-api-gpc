@@ -30,7 +30,7 @@ class MysqlPetRepositoryImplTest {
     }
 
     @Autowired
-    private MysqlPetRepositoryImpl mySQLPetRepository;
+    private MysqlProteinRepositoryImpl mySQLPetRepository;
 
     @Test
     void savePet() {

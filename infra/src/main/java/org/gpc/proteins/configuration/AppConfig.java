@@ -1,7 +1,8 @@
 package org.gpc.proteins.configuration;
 
-import org.gpc.proteins.adapters.out.mysql.MysqlPetRepositoryImpl;
+import org.gpc.proteins.adapters.out.mysql.MysqlProteinRepositoryImpl;
 import org.gpc.proteins.adapters.out.mysql.PetRepository;
+import org.gpc.proteins.adapters.out.mysql.ProteinRepository;
 import org.gpc.proteins.port.RepositoryPort;
 import org.gpc.proteins.usecase.CreateProteinUseCaseImpl;
 import org.gpc.proteins.usecase.DeleteProteinUseCaseImpl;
@@ -14,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
     @Bean
-    MysqlPetRepositoryImpl getMysqlPetRepositoryImpl(PetRepository petRepository){
-        return new MysqlPetRepositoryImpl(petRepository);
+    MysqlProteinRepositoryImpl getMysqlPetRepositoryImpl(ProteinRepository proteinRepository){
+        return new MysqlProteinRepositoryImpl(proteinRepository);
     }
     @Bean
     CreateProteinUseCaseImpl getCreatePetUseCaseImpl(RepositoryPort repositoryPort){
