@@ -39,9 +39,9 @@ class PetControllerAdapterTest extends MySQLTestContainer {
         CreatePetRequestDTO entity = new CreatePetRequestDTO("Moris", 3, "dog", "chihuahua ");
         HttpEntity<CreatePetRequestDTO> request = new HttpEntity<>(entity);
         ResponseEntity<CreatePetResponseDTO> response = restTemplate.exchange(path, HttpMethod.POST, request, CreatePetResponseDTO.class);
-        assertTrue(response.getStatusCode().is2xxSuccessful());
         Optional<Pet> maybePetSaved = mySQLPetRepository.getPet(Objects.requireNonNull(response.getBody()).id());
-        System.out.println("Response: " + response);
+
+        validateSuccessfulResponse(response);
         assertTrue(maybePetSaved.isPresent());
         assertEquals(entity.name(), maybePetSaved.get().name());
         assertEquals(entity.age(), maybePetSaved.get().age());
@@ -51,15 +51,52 @@ class PetControllerAdapterTest extends MySQLTestContainer {
 
     @Test
     void shouldGetAPetSuccessful() {
-        Pet pet = new Pet("Mauricio", 2, Specie.CAT, "Criollito");
-        Integer id = mySQLPetRepository.savePet(pet);
+        Pet expectedPet = new Pet("Mauricio", 2, Specie.CAT, "Criollito");
+        Integer id = mySQLPetRepository.savePet(expectedPet);
         String path = host + port + "/pets" + "/" + id;
         ResponseEntity<Pet> response = restTemplate.exchange(path, HttpMethod.GET, null, Pet.class);
+
+        validateSuccessfulResponse(response);
+        assertEquals(expectedPet.name(), Objects.requireNonNull(response.getBody()).name());
+        assertEquals(expectedPet.age(), Objects.requireNonNull(response.getBody()).age());
+        assertEquals(expectedPet.specie(), Objects.requireNonNull(response.getBody()).specie());
+        assertEquals(expectedPet.breed(), Objects.requireNonNull(response.getBody()).breed());
+    }
+
+    @Test
+    void shouldUpdateAPetSuccessful() {
+        Pet oudatedPet = new Pet("Mauricio", 2, Specie.CAT, "Criollito");
+        Integer id = mySQLPetRepository.savePet(oudatedPet);
+        String path = host + port + "/pets" + "/" + id;
+
+        Pet expectedPet = new Pet("Makarritas", 1, Specie.CAT, "Criollito");
+        CreatePetRequestDTO entity = new CreatePetRequestDTO(expectedPet.name(), expectedPet.age(), null, null);
+        HttpEntity<CreatePetRequestDTO> request = new HttpEntity<>(entity);
+        ResponseEntity<CreatePetResponseDTO> response = restTemplate.exchange(path, HttpMethod.PUT, request, CreatePetResponseDTO.class);
+
+        validateSuccessfulResponse(response);
+        Optional<Pet> maybePet = mySQLPetRepository.getPet(id);
+        assertTrue(maybePet.isPresent());
+        assertEquals(expectedPet.name(), maybePet.map(Pet::name).orElse("Invalid"));
+        assertEquals(expectedPet.age(), maybePet.map(Pet::age).orElse(-1));
+        assertEquals(expectedPet.specie(), maybePet.map(Pet::specie).orElse(Specie.DOG));
+        assertEquals(expectedPet.breed(), maybePet.map(Pet::breed).orElse("Invalid"));
+    }
+
+    @Test
+    void shouldDeleteAPetSuccessful() {
+        Pet petToBeDeleted = new Pet("Mauricio", 2, Specie.CAT, "Criollito");
+        Integer id = mySQLPetRepository.savePet(petToBeDeleted);
+        String path = host + port + "/pets" + "/" + id;
+
+        ResponseEntity<Integer> response = restTemplate.exchange(path, HttpMethod.DELETE, null, Integer.class);
+        validateSuccessfulResponse(response);
+        Optional<Pet> maybePet = mySQLPetRepository.getPet(id);
+        assertTrue(maybePet.isEmpty());
+    }
+
+    private <T> void validateSuccessfulResponse(ResponseEntity<T> response) {
         System.out.println("Response: " + response);
         assertTrue(response.getStatusCode().is2xxSuccessful());
-        assertEquals(pet.name(), Objects.requireNonNull(response.getBody()).name());
-        assertEquals(pet.age(), Objects.requireNonNull(response.getBody()).age());
-        assertEquals(pet.specie(), Objects.requireNonNull(response.getBody()).specie());
-        assertEquals(pet.breed(), Objects.requireNonNull(response.getBody()).breed());
     }
 }
