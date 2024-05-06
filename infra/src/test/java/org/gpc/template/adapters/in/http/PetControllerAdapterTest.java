@@ -3,6 +3,7 @@ package org.gpc.template.adapters.in.http;
 import org.gpc.template.MySQLTestContainer;
 import org.gpc.template.adapters.in.http.dto.CreatePetRequestDTO;
 import org.gpc.template.adapters.in.http.dto.CreatePetResponseDTO;
+import org.gpc.template.adapters.in.http.dto.UpdatePetRequestDTO;
 import org.gpc.template.kernel.Pet;
 import org.gpc.template.kernel.Specie;
 import org.junit.jupiter.api.Test;
@@ -70,9 +71,13 @@ class PetControllerAdapterTest extends MySQLTestContainer {
         String path = host + port + "/pets" + "/" + id;
 
         Pet expectedPet = new Pet("Makarritas", 1, Specie.CAT, "Criollito");
-        CreatePetRequestDTO entity = new CreatePetRequestDTO(expectedPet.name(), expectedPet.age(), null, null);
-        HttpEntity<CreatePetRequestDTO> request = new HttpEntity<>(entity);
-        ResponseEntity<CreatePetResponseDTO> response = restTemplate.exchange(path, HttpMethod.PUT, request, CreatePetResponseDTO.class);
+        UpdatePetRequestDTO entity = new UpdatePetRequestDTO(
+            Optional.of(expectedPet.name()),
+            Optional.of(expectedPet.age()),
+            Optional.empty(),
+            Optional.empty());
+        HttpEntity<UpdatePetRequestDTO> request = new HttpEntity<>(entity);
+        ResponseEntity<Object> response = restTemplate.exchange(path, HttpMethod.PUT, request, Object.class);
 
         validateSuccessfulResponse(response);
         Optional<Pet> maybePet = mySQLPetRepository.getPet(id);

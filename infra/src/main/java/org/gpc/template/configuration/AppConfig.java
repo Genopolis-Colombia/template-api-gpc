@@ -2,6 +2,7 @@ package org.gpc.template.configuration;
 
 import org.gpc.template.adapters.out.mysql.MysqlPetRepositoryImpl;
 import org.gpc.template.adapters.out.mysql.PetRepository;
+import org.gpc.template.handlers.UpdatePetHandler;
 import org.gpc.template.port.RepositoryPort;
 import org.gpc.template.usecase.CreatePetUseCaseImpl;
 import org.gpc.template.usecase.DeletePetUseCaseImpl;
@@ -34,6 +35,11 @@ public class AppConfig {
     @Bean
     PutPetUseCaseImpl getPutPetUseCase(RepositoryPort repositoryPort){
         return new PutPetUseCaseImpl(repositoryPort);
+    }
+
+    @Bean
+    UpdatePetHandler getUpdatePetHandler(GetPetUseCaseImpl getPetUseCase, PutPetUseCaseImpl putPetUseCase){
+        return new UpdatePetHandler(putPetUseCase, getPetUseCase);
     }
 
 
