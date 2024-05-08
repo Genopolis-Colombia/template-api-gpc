@@ -32,9 +32,8 @@ public class MysqlPetRepositoryImpl implements RepositoryPort {
     }
 
     @Override
-    public Integer deletePet(Integer id) {
+    public void deletePet(Integer id) {
         petRepository.deleteById(id);
-        return id;
     }
 
     @Override

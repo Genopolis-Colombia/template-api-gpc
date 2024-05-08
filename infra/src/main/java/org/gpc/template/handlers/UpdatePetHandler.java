@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.gpc.template.adapters.in.http.dto.DTO;
 import org.gpc.template.adapters.in.http.dto.ErrorResponse;
 import org.gpc.template.adapters.in.http.dto.UpdatePetRequestDTO;
+import org.gpc.template.handlers.commands.UpdatePetCommand;
 import org.gpc.template.kernel.Specie;
 import org.gpc.template.kernel.UpdatePet;
 import org.gpc.template.usecase.GetPetUseCaseImpl;
@@ -16,12 +17,14 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 @AllArgsConstructor
-public class UpdatePetHandler {
+public class UpdatePetHandler implements Handler<UpdatePetCommand, ResponseEntity<DTO>> {
   private final PutPetUseCaseImpl putPetUseCase;
   private final GetPetUseCaseImpl getPetUseCase;
 
-  public ResponseEntity<Optional<DTO>> handle(UpdatePetRequestDTO updatePetRequestDTO, Integer petID) {
-
+  @Override
+  public ResponseEntity<DTO> handle(UpdatePetCommand command) {
+    UpdatePetRequestDTO updatePetRequestDTO = command.updatePetRequestDTO();
+    Integer petID = command.petID();
     Optional<String> maybeNameToBeUpdated = updatePetRequestDTO.name().filter(filterNonEmptyString());
     Optional<Integer> maybeAgeToBeUpdated = updatePetRequestDTO.age().filter(filterNonNegativeNumbers());
     Optional<String> maybeSpecieToBeUpdated = updatePetRequestDTO.specie().filter(filterNonEmptyString());
@@ -33,22 +36,20 @@ public class UpdatePetHandler {
         maybeSpecieToBeUpdated,
         maybeBreedToBeUpdated
     );
-    if (maybeValidationError.isPresent()) {
-      return new ResponseEntity<Optional<DTO>>(maybeValidationError, HttpStatus.BAD_REQUEST);
-    } else {
-      return getPetUseCase.execute(petID)
-          .map(pet ->
-              new UpdatePet(
-                  maybeNameToBeUpdated.orElse(pet.name()),
-                  maybeAgeToBeUpdated.orElse(pet.age()),
-                  maybeSpecieToBeUpdated.map(value -> Specie.valueOf(value.toUpperCase())).orElse(pet.specie()),
-                  maybeBreedToBeUpdated.orElse(pet.breed()),
-                  petID
-              )
-          ).flatMap(putPetUseCase::execute)
-          .map(updatedPet -> new ResponseEntity<Optional<DTO>>(Optional.empty(), HttpStatus.OK))
-          .orElse(new ResponseEntity<Optional<DTO>>(Optional.of(new ErrorResponse("Invalid pet id", "The provided pet was not found")), HttpStatus.NOT_FOUND));
-    }
+    return maybeValidationError.map(dto -> new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST)).
+        orElseGet(() -> getPetUseCase.execute(petID)
+            .map(pet ->
+                new UpdatePet(
+                    maybeNameToBeUpdated.orElse(pet.name()),
+                    maybeAgeToBeUpdated.orElse(pet.age()),
+                    maybeSpecieToBeUpdated.map(value -> Specie.valueOf(value.toUpperCase())).orElse(pet.specie()),
+                    maybeBreedToBeUpdated.orElse(pet.breed()),
+                    petID
+                )
+            ).flatMap(putPetUseCase::execute)
+            .map(updatedPet -> new ResponseEntity<DTO>(HttpStatus.NO_CONTENT))
+            .orElse(new ResponseEntity<>(new ErrorResponse("Invalid pet id", "The provided pet was not found"), HttpStatus.NOT_FOUND))
+        );
   }
 
   private static Predicate<String> filterNonEmptyString() {

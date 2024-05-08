@@ -10,7 +10,7 @@ public interface RepositoryPort {
 
     Optional<Pet> getPet(Integer id);
 
-    Integer deletePet(Integer id);
+    void deletePet(Integer id);
 
     Optional<Pet> putPet(UpdatePet updatePet);
 
