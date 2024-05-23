@@ -3,124 +3,49 @@ package org.gpc.proteins.adapters.in.http;
 import lombok.AllArgsConstructor;
 import org.gpc.proteins.adapters.in.http.dto.CreateProteinRequestDTO;
 import org.gpc.proteins.adapters.in.http.dto.CreateProteinResponseDTO;
+import org.gpc.proteins.adapters.in.http.dto.DTO;
+import org.gpc.proteins.adapters.in.http.dto.UpdateProteinRequestDTO;
+import org.gpc.proteins.handler.*;
+import org.gpc.proteins.handler.commands.UpdateProteinCommand;
 import org.gpc.proteins.kernel.Protein;
 import org.gpc.proteins.kernel.UpdateProtein;
-import org.gpc.proteins.usecase.CreateProteinUseCaseImpl;
-import org.gpc.proteins.usecase.DeleteProteinUseCaseImpl;
-import org.gpc.proteins.usecase.GetProteinUseCaseImpl;
-import org.gpc.proteins.usecase.PutProteinUseCaseImpl;
+import org.gpc.proteins.usecase.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
 public class ProteinControllerAdapter {
-    private final CreateProteinUseCaseImpl createProteinUseCase;
-    private final GetProteinUseCaseImpl getProteinUseCase;
-    private final DeleteProteinUseCaseImpl deleteProteinUseCase;
-    private final PutProteinUseCaseImpl putProteinUseCase;
+    private final CreateProteinHandler createProteinHandler;
+    private final GetProteinHandler getProteinHandler;
+    private final DeleteProteinHandler deleteProteinHandler;
+    private final UpdateProteinHandler updateProteinHandler;
+    private final ListProteinHandler listProteinHandler;
 
     @PostMapping("/proteins")
-    public CreateProteinResponseDTO createProtein(@RequestBody CreateProteinRequestDTO proteinRequestDto) {
-        Integer id = createProteinUseCase.execute(new Protein(
-                proteinRequestDto.fastaName(),
-                proteinRequestDto.source(),
-                proteinRequestDto.organism(),
-                proteinRequestDto.clasification(),
-                proteinRequestDto.clasificationEC(),
-                proteinRequestDto.authors(),
-                proteinRequestDto.fastaSequence()
-        ));
-
-        return new CreateProteinResponseDTO(id);
+    public ResponseEntity<DTO> createProtein(@RequestBody CreateProteinRequestDTO proteinRequestDto) {
+        return createProteinHandler.handle(proteinRequestDto);
     }
-
     @GetMapping("/proteins/{protein_id}")
-    public Optional<Protein> getProtein(@PathVariable Integer protein_id) {
-        return getProteinUseCase.execute(protein_id);
+    public ResponseEntity<DTO> getProtein(@PathVariable UUID protein_id) {
+        return getProteinHandler.handle(protein_id);
+    }
+    @GetMapping("/v1/proteins")
+    public List<Protein> listProteins() {
+        return listProteinUseCase.execute(null);
+    }
+    @DeleteMapping("/proteins/{protein_id}")
+    public ResponseEntity<DTO> deleteProtein(@PathVariable UUID protein_id) {
+        return deleteProteinHandler.handle(protein_id);
     }
 
-    @DeleteMapping("/pets/{pet_id}")
-    public Integer deleteProtein (@PathVariable Integer protein_id){
-        return deleteProteinUseCase.execute(protein_id);
+    @PutMapping("/proteins/{protein_id}")
+    public ResponseEntity<DTO> putProtein(@PathVariable UUID pet_id, @RequestBody UpdateProteinRequestDTO petRequestDto) {
+        return updateProteinHandler.handle(new UpdateProteinCommand(petRequestDto, pet_id));
     }
-    @PutMapping("/pets/{pet_id}")
-    public CreateProteinResponseDTO putProtein (@PathVariable Integer protein_id, @RequestBody CreateProteinRequestDTO proteinRequestDto ){
-
-        Optional<Protein> maybePet = getProteinUseCase.execute(protein_id);
-        maybePet.map(protein ->
-            new UpdateProtein(
-
-                    getFastaNameToUpdate(protein,proteinRequestDto.fastaName()),
-                    getSourceToUpdate(protein,proteinRequestDto.source()),
-                    getOrganismToUpdate(protein, proteinRequestDto.organism()),
-                    getClasificationToUpdate(protein,proteinRequestDto.clasification()),
-                    getClasificationECToUpdate(protein,proteinRequestDto.clasificationEC()),
-                    getAuthorsToUpdate(protein, proteinRequestDto.authors()),
-                    getFastaSequenceToUpdate(protein,proteinRequestDto.fastaSequence()),
-                    protein_id
-            )
-        ).flatMap(putProteinUseCase::execute);
-        return new CreateProteinResponseDTO(protein_id);
-    }
-
-    private String getFastaNameToUpdate (Protein protein, String fastaName){
-        if (fastaName != null && fastaName != "") {
-           return fastaName;
-        } else {
-            return protein.fastaName();
-        }
-    }
-    private String getSourceToUpdate (Protein protein, String source){
-        if (source!= null && source != "") {
-            return source;
-        } else {
-            return protein.source();
-        }
-    }
-
-    private String getOrganismToUpdate (Protein protein, String organism){
-        if (organism != null && organism != "") {
-            return organism;
-        } else {
-            return protein.organism();
-        }
-    }
-    private String getClasificationToUpdate (Protein protein, String clasification){
-        if (clasification!= null && clasification != "") {
-            return clasification;
-        } else {
-            return protein.clasification();
-        }
-    }
-
-    private String getClasificationECToUpdate (Protein protein, String clasificationEC){
-        if (clasificationEC!= null && clasificationEC != "") {
-            return clasificationEC;
-        } else {
-            return protein.clasificationEC();
-        }
-    }
-
-    private String getAuthorsToUpdate (Protein protein, String authors){
-        if (authors != null && authors != "") {
-            return authors;
-        } else {
-            return protein.authors();
-        }
-    }
-    private String getFastaSequenceToUpdate (Protein protein, String fastaSequence){
-        if (fastaSequence!= null && fastaSequence != "") {
-            return fastaSequence;
-        } else {
-            return protein.fastaSequence();
-        }
-    }
-
-
-
-
-
 
 }

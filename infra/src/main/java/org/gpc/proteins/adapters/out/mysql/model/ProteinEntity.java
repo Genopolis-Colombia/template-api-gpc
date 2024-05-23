@@ -17,6 +17,7 @@ public class ProteinEntity {
     @Id
     @UuidGenerator
     @GeneratedValue(strategy= GenerationType.AUTO)
+    private UUID id;
     private String fastaName;
     private String source;
     private String organism;
@@ -24,6 +25,4 @@ public class ProteinEntity {
     private String clasificationEC;
     private String authors;
     private String fastaSequence;
-    private UUID id;
-
 }

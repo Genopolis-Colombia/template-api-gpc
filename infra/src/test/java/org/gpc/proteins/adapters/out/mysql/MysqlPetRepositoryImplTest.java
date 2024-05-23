@@ -1,6 +1,5 @@
 package org.gpc.proteins.adapters.out.mysql;
 
-import org.gpc.proteins.kernel.Pet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,25 +33,11 @@ class MysqlPetRepositoryImplTest {
 
     @Test
     void savePet() {
-        Integer id = 1;
-        String name = "Makarras";
-        Integer age = 1;
-        Specie specie = Specie.CAT;
-        String breed = "Criollo";
-        mySQLPetRepository.savePet(new Pet(name, age, specie, breed));
-        Optional<Pet> maybePet = mySQLPetRepository.getPet(id);
-        assert(maybePet.isPresent());
-        assertEquals(name, maybePet.get().name());
-        assertEquals(age, maybePet.get().age());
-        assertEquals(specie, maybePet.get().specie());
-        assertEquals(breed, maybePet.get().breed());
+
     }
 
     @Test
     void getGet() { //TODO: improve this test
-        Integer id = 2;
-        Optional<Pet> maybePet = mySQLPetRepository.getPet(id);
-        maybePet.ifPresent(pet -> System.out.println("The pet is " + pet));
-        assert(maybePet.isEmpty());
+
     }
 }

@@ -1,15 +1,15 @@
 package org.gpc.proteins.adapters.out.mysql;
 
 import org.gpc.proteins.adapters.out.mysql.model.ProteinEntity;
-import org.gpc.proteins.adapters.out.mysql.transformers.PetTransformer;
 import org.gpc.proteins.adapters.out.mysql.transformers.ProteinTransformer;
-import org.gpc.proteins.kernel.Pet;
 import org.gpc.proteins.kernel.Protein;
 import org.gpc.proteins.kernel.UpdateProtein;
 import org.gpc.proteins.port.RepositoryPort;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 public class MysqlProteinRepositoryImpl implements RepositoryPort {
@@ -26,12 +26,12 @@ public class MysqlProteinRepositoryImpl implements RepositoryPort {
     }
 
     @Override
-    public Optional<Protein> getProtein(Integer id) {
+    public Optional<Protein> getProtein(UUID id) {
         return proteinRepository.findById(id).map(ProteinTransformer::entityToProtein);
     }
 
     @Override
-    public Integer deleteProtein(Integer id) {
+    public UUID deleteProtein(UUID id) {
         proteinRepository.deleteById(id);
         return id;
     }
@@ -42,6 +42,14 @@ public class MysqlProteinRepositoryImpl implements RepositoryPort {
         ProteinEntity proteinEntity = ProteinTransformer.updateProteinToEntity(updateProtein);
         proteinRepository.save(proteinEntity);
         return Optional.of(ProteinTransformer.entityToProtein(proteinEntity));
+    }
+
+    @Override
+    public List<Protein> getAllProteins() {
+        List<ProteinEntity> proteinEntity = (List<ProteinEntity>) proteinRepository.findAll();
+        return proteinEntity.stream()
+                .map(ProteinTransformer::entityToProtein)
+                .collect(Collectors.toList());
     }
 
 
