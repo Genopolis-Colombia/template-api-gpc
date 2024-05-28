@@ -36,7 +36,7 @@ public class ProteinControllerAdapter {
     }
     @GetMapping("/v1/proteins")
     public List<Protein> listProteins() {
-        return listProteinUseCase.execute(null);
+        return (List<Protein>) listProteinHandler.handle(null);
     }
     @DeleteMapping("/proteins/{protein_id}")
     public ResponseEntity<DTO> deleteProtein(@PathVariable UUID protein_id) {

@@ -5,6 +5,8 @@ import org.gpc.proteins.adapters.out.mysql.transformers.ProteinTransformer;
 import org.gpc.proteins.kernel.Protein;
 import org.gpc.proteins.kernel.UpdateProtein;
 import org.gpc.proteins.port.RepositoryPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 public class MysqlProteinRepositoryImpl implements RepositoryPort {
 
     private final ProteinRepository proteinRepository;
+    private static final Logger logger = LoggerFactory.getLogger(MysqlProteinRepositoryImpl.class);
 
     public MysqlProteinRepositoryImpl(ProteinRepository proteinRepository) {
         this.proteinRepository = proteinRepository;
@@ -22,6 +25,7 @@ public class MysqlProteinRepositoryImpl implements RepositoryPort {
 
     @Override
     public UUID saveProtein(Protein protein) {
+        logger.debug("Starting saving protein");
         return proteinRepository.save(ProteinTransformer.proteinToEntity(protein)).getId();
     }
 

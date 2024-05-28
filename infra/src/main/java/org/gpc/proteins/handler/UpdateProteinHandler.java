@@ -2,10 +2,12 @@ package org.gpc.proteins.handler;
 
 import lombok.AllArgsConstructor;
 import org.gpc.proteins.adapters.in.http.dto.DTO;
+import org.gpc.proteins.adapters.in.http.dto.ErrorResponse;
 import org.gpc.proteins.adapters.in.http.dto.UpdateProteinRequestDTO;
 import org.gpc.proteins.handler.commands.UpdateProteinCommand;
+import org.gpc.proteins.kernel.UpdateProtein;
 import org.gpc.proteins.usecase.GetProteinUseCaseImpl;
-import org.gpc.proteins.usecase.UpdateProteinUseCaseImpl;
+import org.gpc.proteins.usecase.PutProteinUseCaseImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -16,38 +18,48 @@ import java.util.function.Predicate;
 
 @AllArgsConstructor
 public class UpdateProteinHandler implements Handler<UpdateProteinCommand, ResponseEntity<DTO>> {
-    private final UpdateProteinUseCaseImpl updateProteinUseCase;
+    private final PutProteinUseCaseImpl putProteinUseCase;
     private final GetProteinUseCaseImpl getProteinUseCase;
 
     @Override
     public ResponseEntity<DTO> handle(UpdateProteinCommand command) {
         UpdateProteinRequestDTO updateProteinRequestDTO = command.updateProteinRequestDTO();
-        UUID proteinID = command.proteinID();
 
-        Optional<String> maybeNameToBeUpdated = updatePetRequestDTO.name().filter(filterNonEmptyString());
-        Optional<Integer> maybeAgeToBeUpdated = updatePetRequestDTO.age().filter(filterNonNegativeNumbers());
-        Optional<String> maybeSpecieToBeUpdated = updatePetRequestDTO.specie().filter(filterNonEmptyString());
-        Optional<String> maybeBreedToBeUpdated = updatePetRequestDTO.breed().filter(filterNonEmptyString());
+        UUID proteinID = command.proteinID();
+        Optional<String> maybeFastaNameToBeUpdated = updateProteinRequestDTO.fastaName().filter(filterNonEmptyString());
+        Optional<String> maybeSourceToBeUpdated = updateProteinRequestDTO.source().filter(filterNonEmptyString());
+        Optional<String> maybeOrganismToBeUpdated = updateProteinRequestDTO.organism().filter(filterNonEmptyString());
+        Optional<String> maybeClasificationToBeUpdated = updateProteinRequestDTO.clasification().filter(filterNonEmptyString());
+        Optional<String> maybeClasificationECToBeUpdated = updateProteinRequestDTO.clasificationEC().filter(filterNonEmptyString());
+        Optional<String> maybeAuthorsToBeUpdated = updateProteinRequestDTO.authors().filter(filterNonEmptyString());
+        Optional<String> maybeFastaSequenceToBeUpdated = updateProteinRequestDTO.fastaSequence().filter(filterNonEmptyString());
+
 
         Optional<DTO> maybeValidationError = validateFieldsToBeUpdated(
-                maybeNameToBeUpdated,
-                maybeAgeToBeUpdated,
-                maybeSpecieToBeUpdated,
-                maybeBreedToBeUpdated
+                maybeFastaNameToBeUpdated,
+                maybeSourceToBeUpdated,
+                maybeOrganismToBeUpdated,
+                maybeClasificationToBeUpdated,
+                maybeClasificationECToBeUpdated,
+                maybeAuthorsToBeUpdated,
+                maybeFastaSequenceToBeUpdated
         );
         return maybeValidationError.map(dto -> new ResponseEntity<>(dto, HttpStatus.BAD_REQUEST)).
-                orElseGet(() -> getPetUseCase.execute(petID)
-                        .map(pet ->
-                                new UpdatePet(
-                                        maybeNameToBeUpdated.orElse(pet.name()),
-                                        maybeAgeToBeUpdated.orElse(pet.age()),
-                                        maybeSpecieToBeUpdated.map(value -> Specie.valueOf(value.toUpperCase())).orElse(pet.specie()),
-                                        maybeBreedToBeUpdated.orElse(pet.breed()),
-                                        petID
+                orElseGet(() -> getProteinUseCase.execute(proteinID)
+                        .map(protein ->
+                                new UpdateProtein(
+                                        maybeFastaNameToBeUpdated.orElse(protein.fastaName()),
+                                        maybeSourceToBeUpdated.orElse(protein.source()),
+                                        maybeOrganismToBeUpdated.orElse(protein.organism()),
+                                        maybeClasificationToBeUpdated.orElse(protein.clasification()),
+                                        maybeClasificationECToBeUpdated.orElse(protein.clasificationEC()),
+                                        maybeAuthorsToBeUpdated.orElse(protein.authors()),
+                                        maybeFastaSequenceToBeUpdated.orElse(protein.fastaSequence()),
+                                        proteinID
                                 )
-                        ).flatMap(putPetUseCase::execute)
-                        .map(updatedPet -> new ResponseEntity<DTO>(HttpStatus.NO_CONTENT))
-                        .orElse(new ResponseEntity<>(new ErrorResponse("Invalid pet id", "The provided pet was not found"), HttpStatus.NOT_FOUND))
+                        ).flatMap(putProteinUseCase::execute)
+                        .map(updatedProtein -> new ResponseEntity<DTO>(HttpStatus.NO_CONTENT))
+                        .orElse(new ResponseEntity<>(new ErrorResponse("Invalid protein id", "The provided proteins was not found"), HttpStatus.NOT_FOUND))
                 );
     }
 
@@ -55,25 +67,23 @@ public class UpdateProteinHandler implements Handler<UpdateProteinCommand, Respo
         return value -> !value.trim().isEmpty();
     }
 
-    private static Predicate<Integer> filterNonNegativeNumbers() {
-        return number -> number > 0;
-    }
 
-    private Optional<DTO> validateFieldsToBeUpdated(Optional<String> name,
-                                                    Optional<Integer> age,
-                                                    Optional<String> specie,
-                                                    Optional<String> breed) {
+    private Optional<DTO> validateFieldsToBeUpdated(Optional<String> fastaName,
+                                                    Optional<String> source,
+                                                    Optional<String> organism,
+                                                    Optional<String> clasification,
+                                                    Optional<String> clasificationEC,
+                                                    Optional<String> authors,
+                                                    Optional<String> fastaSequence) {
 
-        boolean isValidSpecie = specie.map(value -> Arrays.stream(Specie.values())
-                .map(Specie::toString)
-                .toList().contains(value.toUpperCase())).orElse(true);
-        if (name.isEmpty() && age.isEmpty() && specie.isEmpty() && breed.isEmpty() || !isValidSpecie) {
+        if (fastaName.isEmpty() && source.isEmpty() && organism.isEmpty() && clasification.isEmpty() && clasificationEC.isEmpty() && authors.isEmpty() && fastaSequence.isEmpty()) {
             return Optional
                     .of(new ErrorResponse(
                             "Invalid fields",
                             "One or more fields are not valid")
                     );
         }
+
         return Optional.empty();
     }
 

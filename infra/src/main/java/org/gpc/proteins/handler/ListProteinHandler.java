@@ -23,7 +23,6 @@ public class ListProteinHandler implements Handler <Void, ResponseEntity<DTO>> {
         List<Protein> proteins = listProteinsUseCase.execute(input);
         List<ProteinResponseDTO> proteinResponseDTOs = proteins.stream()
                 .map(protein -> new ProteinResponseDTO(
-                        protein.id(), // Asumiendo que Protein tiene un campo id
                         protein.fastaName(),
                         protein.source(),
                         protein.organism(),

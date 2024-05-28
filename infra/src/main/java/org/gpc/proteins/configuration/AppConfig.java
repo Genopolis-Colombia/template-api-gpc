@@ -2,6 +2,7 @@ package org.gpc.proteins.configuration;
 
 import org.gpc.proteins.adapters.out.mysql.MysqlProteinRepositoryImpl;
 import org.gpc.proteins.adapters.out.mysql.ProteinRepository;
+import org.gpc.proteins.handler.*;
 import org.gpc.proteins.port.RepositoryPort;
 import org.gpc.proteins.usecase.*;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +30,37 @@ public class AppConfig {
         return new DeleteProteinUseCaseImpl(repositoryPort);
     }
     @Bean
-    UpdateProteinUseCaseImpl getPutProteinUseCase(RepositoryPort repositoryPort){
-        return new UpdateProteinUseCaseImpl(repositoryPort);
+    PutProteinUseCaseImpl getPutProteinUseCase(RepositoryPort repositoryPort){
+        return new PutProteinUseCaseImpl(repositoryPort);
     }
     @Bean
     ListProteinUseCaseImpl getListProteinUseCase(RepositoryPort repositoryPort){
         return new ListProteinUseCaseImpl(repositoryPort);
+    }
+
+    @Bean
+    UpdateProteinHandler getUpdateProteinHandler(GetProteinUseCaseImpl getProteinUseCase, PutProteinUseCaseImpl putProteinUseCase){
+        return new UpdateProteinHandler(putProteinUseCase, getProteinUseCase);
+    }
+
+    @Bean
+    CreateProteinHandler getCreateProteinHandler(CreateProteinUseCaseImpl createProteinUseCase){
+        return new CreateProteinHandler(createProteinUseCase);
+    }
+
+    @Bean
+    GetProteinHandler getGetProteinHandler(GetProteinUseCaseImpl getProteinUseCase){
+        return new GetProteinHandler(getProteinUseCase);
+    }
+
+    @Bean
+    DeleteProteinHandler getDeleteProteinHandler(DeleteProteinUseCaseImpl deletePetUseCase){
+        return new DeleteProteinHandler(deletePetUseCase);
+    }
+
+    @Bean
+    ListProteinHandler getListProteinHandler(ListProteinUseCaseImpl listProteinUseCase){
+        return new ListProteinHandler(listProteinUseCase);
     }
 
 

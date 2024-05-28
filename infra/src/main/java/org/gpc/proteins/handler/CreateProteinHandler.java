@@ -15,15 +15,15 @@ public class CreateProteinHandler implements Handler<CreateProteinRequestDTO, Re
     private final CreateProteinUseCaseImpl createProteinUseCase;
 
     @Override
-    public ResponseEntity<DTO> handle(CreateProteinRequestDTO proteinRequestDTO){
+    public ResponseEntity<DTO> handle(CreateProteinRequestDTO proteinRequestDto){
         UUID id = createProteinUseCase.execute(new Protein(
-                proteinRequestDTO.fastaName(),
-                proteinRequestDTO.source(),
-                proteinRequestDTO.organism(),
-                proteinRequestDTO.clasification(),
-                proteinRequestDTO.clasificationEC(),
-                proteinRequestDTO.authors(),
-                proteinRequestDTO.fastaSequence()
+                proteinRequestDto.fastaName(),
+                proteinRequestDto.source(),
+                proteinRequestDto.organism(),
+                proteinRequestDto.clasification(),
+                proteinRequestDto.clasificationEC(),
+                proteinRequestDto.authors(),
+                proteinRequestDto.fastaSequence()
         ));
         return new ResponseEntity<>(new CreateProteinResponseDTO(id), HttpStatus.CREATED);
     }

@@ -8,7 +8,7 @@ import org.gpc.proteins.port.RepositoryPort;
 import java.util.Optional;
 
 @AllArgsConstructor
-public class UpdateProteinUseCaseImpl implements UseCase <UpdateProtein, Optional<Protein>> {
+public class PutProteinUseCaseImpl implements UseCase <UpdateProtein, Optional<Protein>> {
 
     private final RepositoryPort repositoryPort;
 
