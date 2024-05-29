@@ -20,6 +20,7 @@ public class ProteinTransformer {
     }
 
     public static Protein entityToProtein(ProteinEntity proteinEntity) {
+
         return new Protein(
                 proteinEntity.getFastaName(),
                 proteinEntity.getSource(),

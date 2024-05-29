@@ -19,8 +19,8 @@ public class GetProteinHandler implements Handler <UUID, ResponseEntity<DTO>> {
     public ResponseEntity<DTO> handle (UUID proteinID){
         return getProteinUseCase.execute(proteinID)
                 .map(protein -> new ResponseEntity<DTO>(
-                        new ProteinResponseDTO(proteinID, protein.fastaName(), protein.source(), protein.organism(), protein.clasification(), protein.clasificationEC(),
-                                protein.authors(),protein.fastaSequence()), HttpStatus.OK
+                        new ProteinResponseDTO(protein.fastaName(), protein.source(), protein.organism(), protein.clasification(), protein.clasificationEC(),
+                                protein.authors(),protein.fastaSequence(), proteinID), HttpStatus.OK
                         )
                 ).orElse(
                         new ResponseEntity<>(

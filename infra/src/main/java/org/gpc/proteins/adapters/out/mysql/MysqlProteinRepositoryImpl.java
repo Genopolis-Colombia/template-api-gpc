@@ -51,6 +51,7 @@ public class MysqlProteinRepositoryImpl implements RepositoryPort {
     @Override
     public List<Protein> getAllProteins() {
         List<ProteinEntity> proteinEntity = (List<ProteinEntity>) proteinRepository.findAll();
+
         return proteinEntity.stream()
                 .map(ProteinTransformer::entityToProtein)
                 .collect(Collectors.toList());

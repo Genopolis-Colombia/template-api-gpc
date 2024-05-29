@@ -34,9 +34,9 @@ public class ProteinControllerAdapter {
     public ResponseEntity<DTO> getProtein(@PathVariable UUID protein_id) {
         return getProteinHandler.handle(protein_id);
     }
-    @GetMapping("/v1/proteins")
-    public List<Protein> listProteins() {
-        return (List<Protein>) listProteinHandler.handle(null);
+    @GetMapping("/proteins/list")
+    public ResponseEntity<DTO> listProteins(@RequestParam Optional<Integer> limit) {
+        return listProteinHandler.handle(limit);
     }
     @DeleteMapping("/proteins/{protein_id}")
     public ResponseEntity<DTO> deleteProtein(@PathVariable UUID protein_id) {
@@ -44,8 +44,8 @@ public class ProteinControllerAdapter {
     }
 
     @PutMapping("/proteins/{protein_id}")
-    public ResponseEntity<DTO> putProtein(@PathVariable UUID pet_id, @RequestBody UpdateProteinRequestDTO petRequestDto) {
-        return updateProteinHandler.handle(new UpdateProteinCommand(petRequestDto, pet_id));
+    public ResponseEntity<DTO> putProtein(@PathVariable UUID protein_id, @RequestBody UpdateProteinRequestDTO proteinRequestDto) {
+        return updateProteinHandler.handle(new UpdateProteinCommand(proteinRequestDto, protein_id));
     }
 
 }
