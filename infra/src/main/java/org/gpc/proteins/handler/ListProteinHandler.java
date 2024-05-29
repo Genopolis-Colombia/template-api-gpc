@@ -31,7 +31,7 @@ public class ListProteinHandler implements Handler <Optional<Integer>, ResponseE
                         protein.clasificationEC(),
                         protein.authors(),
                         protein.fastaSequence(),
-                        UUID.randomUUID() // Generamos un UUID como identificador único para cada proteína
+                        UUID.randomUUID()
                 ))
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new ProteinListResponseDTO(proteinResponseDtoList), HttpStatus.OK);
