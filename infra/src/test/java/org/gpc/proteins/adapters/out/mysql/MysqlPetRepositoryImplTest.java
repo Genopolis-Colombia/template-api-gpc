@@ -17,7 +17,7 @@ import java.util.Optional;
 class MysqlPetRepositoryImplTest {
 
     @Container
-    static MySQLContainer mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0-debian"));
+    static MySQLContainer mySQLContainer = new MySQLContainer<>(DockerImageName.parse("mysql:8.0.30"));
 
     @DynamicPropertySource
     static void dataBaseProperties(DynamicPropertyRegistry registry){

@@ -1,8 +1,7 @@
 # genopolis-colombia-api
 
-Este es un template de referencia para los microservicios usados en genopolis colombia, se implementa una estructura de 
-subprojectos usando gradle para implementar una arquitectura de adaptadores y puertos, también se deben usar testscontainers
-para las pruebas de integración. 
+Este es el repositorio del microservicio Proteins. Proteins es un API Rest que mantiene toda la información relacionada con las proteínas inluído el FASTA.
+El microservicio implementa una estructura de subprojectos usando gradle para implementar una arquitectura de adaptadores y puertos, también se deben usar testscontainers para las pruebas de integración. 
 
 ## Set up
 * Instalar Docker
