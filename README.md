@@ -75,5 +75,5 @@ E. Abre un Pull Request.
 Si tienes alguna pregunta o sugerencia, no dudes en contactarnos a través de [correo electrónico].
 
 ---
-Genopolis Colombia API - Microservicio Proteins
+**Genopolis Colombia API - Microservicio Proteins**
 *Innovando en la gestión de información biotecnológica para un futuro mejor.*
